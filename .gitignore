@@ -1,1 +1,6 @@
-venv/
+# Ignorar ambientes virtuais e bytecode
+.venv/
+__pycache__/
+
+# Ignorar imagens de exemplo
+images_examples/
