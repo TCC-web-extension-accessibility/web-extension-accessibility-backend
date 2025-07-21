@@ -1,7 +1,5 @@
 .venv/
 
-app/images/
-
 venv/
 
 .env
