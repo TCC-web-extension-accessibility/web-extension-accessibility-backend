@@ -1,5 +1,5 @@
 import requests, uuid, json
-from core.config import AZURE_TRANSLATE_API_ENDPOINT, AZURE_TRANSLATE_API_KEY, AZURE_TRANSLATE_API_REGION
+from core.config import AZURE_TRANSLATE_API_ENDPOINT, AZURE_TRANSLATE_API_KEY, AZURE_API_REGION
 
 def translate_list(to_language, text_list, from_language=None):
     path = '/translate'
@@ -14,7 +14,7 @@ def translate_list(to_language, text_list, from_language=None):
 
     headers = {
         'Ocp-Apim-Subscription-Key': AZURE_TRANSLATE_API_KEY,
-        'Ocp-Apim-Subscription-Region': AZURE_TRANSLATE_API_REGION,
+        'Ocp-Apim-Subscription-Region': AZURE_API_REGION,
         'Content-type': 'application/json',
         'X-ClientTraceId': str(uuid.uuid4())
     }
