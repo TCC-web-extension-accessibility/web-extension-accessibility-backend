@@ -9,7 +9,7 @@ client = ImageAnalysisClient(
 )
 
 def analyze_image(image_bytes: bytes) -> str:
-
+    result = None
     try:
         result = client.analyze(
             image_data=image_bytes,
@@ -17,11 +17,9 @@ def analyze_image(image_bytes: bytes) -> str:
             gender_neutral_caption=True
         )
     except Exception as e:
-        print(f"Status code: {e.status_code}")
-        print(f"Reason: {e.reason}")
-        print(f"Message: {e.error.message}")
-
-    if result.caption is not None:
+        return {"caption": "error analyzing image"}
+        
+    if result and result.caption is not None:
         return {"caption": result.caption.text}
     else:
         return {"caption": "no caption"}
