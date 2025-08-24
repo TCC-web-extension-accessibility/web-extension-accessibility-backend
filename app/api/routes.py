@@ -22,7 +22,7 @@ async def describe_image(file: UploadFile = File(...)):
     image_bytes = await file.read()
     caption = analyze_image(image_bytes)
 
-    return caption
+    return caption  
 
 @router.post("/convert-audio/", response_class=Response)
 def convert_audio(text: str) -> Response:
