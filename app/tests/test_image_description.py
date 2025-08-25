@@ -1,55 +1,43 @@
-import unittest
-from unittest.mock import MagicMock, patch
-from app.services.image_description import ImageDescriptionService
+from fastapi.testclient import TestClient
+from main import app
+from services.image_description import analyze_image
+import pytest
+import io
 
-class TestImageDescriptionService(unittest.TestCase):
-    @patch("app.services.image_description.ComputerVisionClient")
-    def test_describe_image_bytes_success(self, MockClient):
-        # Setup
-        mock_caption = MagicMock()
-        mock_caption.text = "a cat sitting on a couch"
+client = TestClient(app)
 
-        mock_result = MagicMock()
-        mock_result.captions = [mock_caption]
+def test_describe_image_invalid_file_type():
+    response = client.post("/api/v1/describe-image/",
+                           files={"file": ("teste.txt", b"conteudo qualquer", "text/plain")}
+                           )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "File must be an image" 
 
-        mock_client_instance = MockClient.return_value
-        mock_client_instance.describe_image_in_stream.return_value = mock_result
+def test_describe_image_success(monkeypatch):
+    def mock_image_analyze(_):
+        return {"caption":"mocked caption"}
 
-        service = ImageDescriptionService("fake_endpoint", "fake_key")
+    monkeypatch.setattr("api.routes.analyze_image", mock_image_analyze)
+    
+    fake_image = io.BytesIO(b"fake_image_bytes")
 
-        # Mock image bytes
-        image_bytes = b"fake_image_data"
+    response = client.post("/api/v1/describe-image/",
+                           files={"file":("test.png", fake_image, "image/png")}
+                           )
+    assert response.status_code == 200
+    assert response.json() == {"caption":"mocked caption"}
 
-        result = service.describe_image_bytes(image_bytes)
+def test_empty_caption(monkeypatch):
+    def mock_no_caption(_):
+        return {"caption": "no caption"}
+    
+    monkeypatch.setattr("api.routes.analyze_image", mock_no_caption)
 
-        self.assertEqual(result, "a cat sitting on a couch")
+    fake_image = io.BytesIO(b"fake_image_bytes")
 
-    @patch("app.services.image_description.ComputerVisionClient")
-    def test_describe_image_bytes_no_caption(self, MockClient):
-        # Setup
-        mock_result = MagicMock()
-        mock_result.captions = []
+    response = client.post("/api/v1/describe-image/",
+                           files={"file":("test.jpg", fake_image, "image/jpeg")}
+                           )
+    assert response.status_code == 200
+    assert response.json() == {"caption": "no caption"}
 
-        mock_client_instance = MockClient.return_value
-        mock_client_instance.describe_image_in_stream.return_value = mock_result
-
-        service = ImageDescriptionService("fake_endpoint", "fake_key")
-
-        result = service.describe_image_bytes(b"image_data")
-
-        self.assertEqual(result, "No description found.")
-
-    @patch("app.services.image_description.ComputerVisionClient")
-    def test_describe_image_bytes_error(self, MockClient):
-        # Simulate exception
-        mock_client_instance = MockClient.return_value
-        mock_client_instance.describe_image_in_stream.side_effect = Exception("Some error")
-
-        service = ImageDescriptionService("fake_endpoint", "fake_key")
-
-        result = service.describe_image_bytes(b"bad_data")
-
-        self.assertIsNone(result)
-
-if __name__ == "__main__":
-    unittest.main()
