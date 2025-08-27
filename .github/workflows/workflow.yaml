@@ -8,6 +8,9 @@ on:
 jobs: 
   continuous-integration:
     runs-on: ubuntu-latest
+    env:
+      AZURE_CV_KEY: ${{ secrets.AZURE_CV_KEY }}
+      AZURE_CV_ENDPOINT: ${{ secrets.AZURE_CV_ENNDPOINT }}
 
     steps:
       - name: Checkout repository
