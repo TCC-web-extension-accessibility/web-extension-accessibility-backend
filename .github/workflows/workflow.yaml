@@ -1,0 +1,32 @@
+name: Continuous Integration
+
+on: 
+  pull_request:
+    branches:
+      - main
+
+jobs: 
+  continuous-integration:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_CV_KEY: ${{ secrets.AZURE_CV_KEY }}
+      AZURE_CV_ENDPOINT: ${{ secrets.AZURE_CV_ENNDPOINT }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.12.3
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        working-directory: ./app
+        run: |
+          PYTHONPATH=$(pwd) pytest
