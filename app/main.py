@@ -2,11 +2,24 @@ from fastapi import FastAPI
 from auth.auth_routes import router as auth_router
 from core.init_db import create_tables,seed_initial_data
 from api.routes import router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 create_tables()
 seed_initial_data()
+
+origins = [
+        "http://localhost:5173"
+        ]
+
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"]
+)
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
