@@ -3,15 +3,14 @@ from auth.auth_routes import router as auth_router
 from core.init_db import create_tables,seed_initial_data
 from api.routes import router
 from fastapi.middleware.cors import CORSMiddleware
+from core.config import ALLOWED_ORIGIN
 
 app = FastAPI()
 
 create_tables()
 seed_initial_data()
 
-origins = [
-        "http://localhost:5173"
-        ]
+origins = [ALLOWED_ORIGIN]
 
 app.add_middleware(
         CORSMiddleware,
