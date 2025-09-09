@@ -1,15 +1,12 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Response, status
-from fastapi import WebSocket, WebSocketDisconnect
+from pydantic import BaseModel
 from schemas.translation_schema import Translation_schema
 from services.translate_service import translate_list
 from services.image_description import analyze_image
 from services.tts_service import TextToSpeechService
-from services.websocket_service import WebSocketManager
-from asyncio.log import logger
-import uuid
+from services.wit_nlu_service import WitNLUService
 
 router = APIRouter()
-websocket_manager = WebSocketManager()
 
 @router.post("/translate/")
 async def translate_text_list(translate_body: Translation_schema):
@@ -49,21 +46,12 @@ def convert_audio(text: str) -> Response:
             detail="Internal error generating audio.",
         )
 
-@router.websocket("/voice-navigation/")
-async def voice_navigation_websocket(websocket: WebSocket):
-    """WebSocket para navegação por voz em tempo real"""
-    client_id = str(uuid.uuid4())
-    
-    try:
-        await websocket_manager.connect(websocket, client_id)
-        
-        while True:
-            # Recebe mensagem do cliente
-            message = await websocket.receive_text()
-            await websocket_manager.handle_message(websocket, client_id, message)
-            
-    except WebSocketDisconnect:
-        websocket_manager.disconnect(client_id)
-    except Exception as e:
-        logger.error(f"Erro na conexão WebSocket: {e}")
-        websocket_manager.disconnect(client_id)
+class VoiceCommandRequest(BaseModel):
+    text: str
+    language: str = "auto"
+
+@router.post("/voice-navigation/command")
+def process_voice_command(request: VoiceCommandRequest):
+    nlu_service = WitNLUService()
+    command = nlu_service.process_command(request.text, request.language)
+    return command
