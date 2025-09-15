@@ -24,14 +24,12 @@ class WitNLUService:
         response = requests.get(self.api_url, headers=headers, params=params)
         data = response.json()
         
-        # Extração de intent e confidence
         intent = None
         confidence = 0.0
         if "intents" in data and data["intents"]:
             intent = data["intents"][0]["name"]
             confidence = data["intents"][0]["confidence"]
-        
-        # Extração de entidades com formato entity_name:role
+                
         action = None
         target = None
         
@@ -50,8 +48,11 @@ class WitNLUService:
             # Mapear entidades para campos do VoiceCommand
             if entity_name == "browse_elements":
                 # Tipos: navigate_next, navigate_previous, navigate_to
-                action = entity_role
-                if entity_role in ["navigate_next", "navigate_previous", "navigate_to"]:
+                if entity_role in ["navigate_next", "navigate_previous"]:
+                    action = entity_role
+                    target = None
+                elif entity_role in ["navigate_to"]:
+                    action = entity_role
                     target = entity_value
                     
             elif entity_name == "zoom":
@@ -59,18 +60,25 @@ class WitNLUService:
                 action = entity_role
                 target = entity_value
                 
-            elif entity_name == "get_value":
+            elif entity_name == "get_value" and intent != "navigate":
                 # Tipo: value - usado para identificar elementos específicos
                 if entity_role == "value":
+                    action = intent
                     target = entity_value
                     
             elif entity_name == "scroll":
                 # Para comandos de scroll
                 action = entity_role
                 target = entity_value
-        
-        # Fallback: se não houver action específica, use intent como action
-        if not action and intent:
+            
+        if intent == "click" and not target:
+            intent = None
+            action = None
+            
+        elif intent == "read" and target:
+            action = intent
+            
+        elif intent == "go_back" or intent == "show_help":
             action = intent
         
         return VoiceCommand(
