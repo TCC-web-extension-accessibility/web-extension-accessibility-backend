@@ -1,14 +1,7 @@
 import os
 import requests
 from typing import Optional
-from dataclasses import dataclass
-
-@dataclass
-class VoiceCommand:
-    intent: str
-    action: str
-    target: Optional[str] = None
-    confidence: float = 0.0
+from schemas.voice_command_schema import VoiceCommand
 
 class WitNLUService:
     def __init__(self, token: Optional[str] = None):
@@ -17,10 +10,9 @@ class WitNLUService:
             raise RuntimeError("WITAI_TOKEN não configurado nas variáveis de ambiente.")
         self.api_url = "https://api.wit.ai/message"
 
-    def process_command(self, text: str, language: str = "auto") -> VoiceCommand:
+    def process_command(self, text: str) -> VoiceCommand:
         headers = {"Authorization": f"Bearer {self.token}"}
         params = {"q": text}
-        # Wit.ai detecta idioma automaticamente, mas pode ser treinado para vários idiomas
         response = requests.get(self.api_url, headers=headers, params=params)
         data = response.json()
         
@@ -40,7 +32,7 @@ class WitNLUService:
             if not entity_list:
                 continue
                 
-            entity_data = entity_list[0]  # Pegar a primeira entidade com maior confidence
+            entity_data = entity_list[0]
             entity_name = entity_data.get("name")
             entity_role = entity_data.get("role")
             entity_value = entity_data.get("value")

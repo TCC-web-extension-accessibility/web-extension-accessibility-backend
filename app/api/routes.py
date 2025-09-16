@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Response, status
-from pydantic import BaseModel
 from schemas.translation_schema import Translation_schema
+from schemas.voice_command_schema import VoiceCommandRequest
 from services.translate_service import translate_list
 from services.image_description import analyze_image
 from services.tts_service import TextToSpeechService
@@ -46,12 +46,8 @@ def convert_audio(text: str) -> Response:
             detail="Internal error generating audio.",
         )
 
-class VoiceCommandRequest(BaseModel):
-    text: str
-    language: str = "auto"
-
 @router.post("/voice-navigation/command")
 def process_voice_command(request: VoiceCommandRequest):
     nlu_service = WitNLUService()
-    command = nlu_service.process_command(request.text, request.language)
+    command = nlu_service.process_command(request.text)
     return command
