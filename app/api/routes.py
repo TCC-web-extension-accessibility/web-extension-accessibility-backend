@@ -1,8 +1,8 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Response, status
-from schemas.translation_schema import Translation_schema
-from services.translate_service import translate_list
-from services.image_description import analyze_image
-from services.tts_service import TextToSpeechService
+from app.schemas.translation_schema import Translation_schema
+from app.services.translate_service import translate_list
+from app.services.image_description import analyze_image
+from app.services.tts_service import TextToSpeechService
 
 router = APIRouter()
 

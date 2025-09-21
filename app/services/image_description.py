@@ -1,7 +1,7 @@
 from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.ai.vision.imageanalysis.models import VisualFeatures
 from azure.core.credentials import AzureKeyCredential
-from core.config import AZURE_CV_KEY, AZURE_CV_ENDPOINT
+from app.core.config import AZURE_CV_KEY, AZURE_CV_ENDPOINT
 
 client = ImageAnalysisClient(
     endpoint=AZURE_CV_ENDPOINT,

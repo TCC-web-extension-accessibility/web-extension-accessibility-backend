@@ -1,8 +1,8 @@
-from core.database import engine, SessionLocal
-from models.user_model import Base
+from app.core.database import engine, SessionLocal
+from app.models.user_model import Base
 from sqlalchemy.orm import Session
-from models.user_model import User_model
-from auth.jwt_handler import get_password_hash
+from app.models.user_model import User_model
+from app.auth.jwt_handler import get_password_hash
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
