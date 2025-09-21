@@ -38,7 +38,7 @@ class WitNLUService:
             entity_value = entity_data.get("value")
             
             # Mapear entidades para campos do VoiceCommand
-            if entity_name == "browse_elements":
+            if entity_name == "browse_elements" and intent == "navigate":
                 # Tipos: navigate_next, navigate_previous, navigate_to
                 if entity_role in ["navigate_next", "navigate_previous"]:
                     action = entity_role
@@ -47,18 +47,18 @@ class WitNLUService:
                     action = entity_role
                     target = entity_value
                     
-            elif entity_name == "zoom":
+            elif entity_name == "zoom" and intent == "zoom":
                 # Tipos: zoom_in, zoom_out
                 action = entity_role
                 target = entity_value
                 
-            elif entity_name == "get_value" and intent != "navigate":
+            elif entity_name == "get_value" and intent in ["click", "read"]:
                 # Tipo: value - usado para identificar elementos específicos
                 if entity_role == "value":
                     action = intent
                     target = entity_value
                     
-            elif entity_name == "scroll":
+            elif entity_name == "scroll" and intent == "navigate":
                 # Para comandos de scroll
                 action = entity_role
                 target = entity_value
