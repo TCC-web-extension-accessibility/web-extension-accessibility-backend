@@ -8,15 +8,6 @@ from core.config import ALLOWED_ORIGIN
 
 app = FastAPI()
 
-# Configuração do CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 create_tables()
 seed_initial_data()
 
