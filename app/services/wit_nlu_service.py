@@ -134,36 +134,43 @@ class WitNLUService:
     def _process_entities(self, entities: Dict[str, List[Dict[str, Any]]], intent: str) -> Tuple[Optional[str], Optional[str]]:
         """Process entities using appropriate processors"""
         action = None
-        target = None
-        
-        for entity_key, entity_list in entities.items():
+        target = []
+
+        for _, entity_list in entities.items():
             if not entity_list:
                 continue
+            
+            for entity in entity_list:
+                entity_data = entity
+                entity_names = []
+                current_entity_name = entity_data.get("name")
+
+                # Validate entity
+                if current_entity_name not in WitNLUConfig.ENTITIES:
+                    logger.warning(f"Unknown entity received: {current_entity_name}")
+                    continue
                 
-            entity_data = entity_list[0]
-            entity_name = entity_data.get("name")
-            
-            # Validate entity
-            if entity_name not in WitNLUConfig.ENTITIES:
-                logger.warning(f"Unknown entity received: {entity_name}")
-                continue
-            
-            # Validate entity-intent combination
-            if intent and (entity_name, intent) not in WitNLUConfig.ENTITY_INTENT_ROLES:
-                logger.debug(f"Entity {entity_name} not valid for intent {intent}")
-                continue
-            
-            # Process entity
-            processor = self.entity_processors.get(entity_name)
-            if processor:
-                processed_action, processed_target = processor.process(entity_data, intent)
-                if processed_action:
-                    action = processed_action
-                    target = processed_target
-                    break  # Use first valid entity processing result
-        
-        return action, target
-    
+                # Validate entity-intent combination
+                if intent and (current_entity_name, intent) not in WitNLUConfig.ENTITY_INTENT_ROLES:
+                    logger.debug(f"Entity {current_entity_name} not valid for intent {intent}")
+                    continue
+                
+                entity_names.append(current_entity_name)
+                
+                if current_entity_name not in entity_names:
+                    logger.debug(f"Entity names {entity_names} do not match current entity name {current_entity_name}")
+                    continue
+                
+                # Process entity
+                processor = self.entity_processors.get(current_entity_name)
+                if processor:
+                    processed_action, processed_target = processor.process(entity_data, intent)
+                    if processed_action:
+                        action = processed_action
+                        target.append(processed_target)
+                        
+        return action, " ".join(target) if target else None
+
     def _handle_special_intents(self, intent: str, action: str, target: str) -> Tuple[Optional[str], Optional[str]]:
         """Handle special intent processing rules"""
         # Handle click without target
