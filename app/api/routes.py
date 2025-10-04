@@ -2,14 +2,22 @@ import io
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Response, status
 from app.schemas.translation_schema import Translation_schema
 from app.schemas.voice_command_schema import VoiceCommandRequest
+from app.schemas.feedback_schema import Feedback_schema
 from app.services.translate_service import translate_list
 from app.services.image_description import analyze_image
-from app.services.color_analyzer import analyze_image_colors
-from app.services.color_analyzer import suggest_filter
+from app.services.feedback_service import send_feedback
 from app.services.tts_service import TextToSpeechService
+from app.services.wit_nlu_service import WitNLUService
 from app.services.wit_nlu_service import WitNLUService
 
 router = APIRouter()
+
+@router.post("/feedback", response_model=Feedback_schema, status_code=status.HTTP_201_CREATED)
+async def post_feedback(feedback_body: Feedback_schema):
+    return send_feedback(
+            title=feedback_body.title,
+            message=feedback_body.message
+    )
 
 @router.post("/feedback", response_model=Feedback_schema, status_code=status.HTTP_201_CREATED)
 async def post_feedback(feedback_body: Feedback_schema):
@@ -55,6 +63,12 @@ def convert_audio(text: str) -> Response:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal error generating audio.",
         )
+
+@router.post("/voice-navigation/command")
+def process_voice_command(request: VoiceCommandRequest):
+    nlu_service = WitNLUService()
+    command = nlu_service.process_command(request.text)
+    return command
 
 @router.post("/voice-navigation/command")
 def process_voice_command(request: VoiceCommandRequest):
