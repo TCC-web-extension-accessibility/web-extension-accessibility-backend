@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from auth.auth_routes import router as auth_router
 from core.init_db import create_tables,seed_initial_data
 from api.routes import router
