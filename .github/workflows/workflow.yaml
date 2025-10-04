@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AZURE_CV_KEY: ${{ secrets.AZURE_CV_KEY }}
-      AZURE_CV_ENDPOINT: ${{ secrets.AZURE_CV_ENNDPOINT }}
+      AZURE_CV_ENDPOINT: ${{ secrets.AZURE_CV_ENDPOINT }}
+      WITAI_TOKEN: ${{ secrets.WITAI_TOKEN }}
 
     steps:
       - name: Checkout repository
