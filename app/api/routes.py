@@ -1,9 +1,11 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Response, status
 from app.schemas.translation_schema import Translation_schema
+from app.schemas.voice_command_schema import VoiceCommandRequest
+from app.schemas.feedback_schema import Feedback_schema
 from app.services.translate_service import translate_list
 from app.services.image_description import analyze_image
+from app.services.feedback_service import send_feedback
 from app.services.tts_service import TextToSpeechService
-from app.services.wit_nlu_service import WitNLUService
 from app.services.wit_nlu_service import WitNLUService
 
 router = APIRouter()
