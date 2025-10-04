@@ -12,7 +12,7 @@ from app.core.database import get_db
 
 router = APIRouter()
 
-@router.post("/token")
+@router.post("/login")
 async def login_for_access_token(db: Annotated[Session, Depends(get_db)],form_data: Annotated[OAuth2PasswordRequestForm, Depends()],) -> Token:
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
