@@ -8,7 +8,7 @@ from app.core.database import get_db
 from sqlalchemy.orm import Session
 from app.models.user_model import User_model
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def get_user(db: Session, username: str) -> User_model |  None:
     return db.query(User_model).filter(User_model.username == username).first()
