@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
-from main import app
-from services.image_description import analyze_image
+from app.main import app
+from app.services.image_description import analyze_image
 import pytest
 import io
 
@@ -17,7 +17,7 @@ def test_describe_image_success(monkeypatch):
     def mock_image_analyze(_):
         return {"caption":"mocked caption"}
 
-    monkeypatch.setattr("api.routes.analyze_image", mock_image_analyze)
+    monkeypatch.setattr("app.api.routes.analyze_image", mock_image_analyze)
     
     fake_image = io.BytesIO(b"fake_image_bytes")
 
@@ -31,7 +31,7 @@ def test_empty_caption(monkeypatch):
     def mock_no_caption(_):
         return {"caption": "no caption"}
     
-    monkeypatch.setattr("api.routes.analyze_image", mock_no_caption)
+    monkeypatch.setattr("app.api.routes.analyze_image", mock_no_caption)
 
     fake_image = io.BytesIO(b"fake_image_bytes")
 
