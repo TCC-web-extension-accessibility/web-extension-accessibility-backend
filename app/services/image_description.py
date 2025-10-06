@@ -17,6 +17,7 @@ def analyze_image(image_bytes: bytes) -> str:
             gender_neutral_caption=True
         )
     except Exception as e:
+        print(e)
         return {"caption": "error analyzing image"}
         
     if result and result.caption is not None:
