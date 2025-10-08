@@ -1,5 +1,6 @@
 import requests, uuid, json
 from app.core.config import AZURE_TRANSLATE_API_ENDPOINT, AZURE_TRANSLATE_API_KEY, AZURE_API_REGION
+from fastapi import HTTPException
 
 def translate_list(to_language, text_list, from_language=None):
     path = '/translate'
@@ -24,8 +25,9 @@ def translate_list(to_language, text_list, from_language=None):
     response = requests.post(constructed_url, params=params, headers=headers, json=body)
 
     if response.status_code != 200:
-        raise Exception(f"Erro {response.status_code}: {response.text}")
+        #gerar um log do erro
+        raise HTTPException(status_code=response.status_code, detail=response.text)
 
     translations = response.json()
-
+    #gear um log do sucesso
     return {orig: trans['translations'][0]['text'] for orig, trans in zip(text_list, translations)}
