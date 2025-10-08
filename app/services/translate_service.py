@@ -1,5 +1,5 @@
 import requests, uuid, json
-from core.config import AZURE_TRANSLATE_API_ENDPOINT, AZURE_TRANSLATE_API_KEY, AZURE_API_REGION
+from app.core.config import AZURE_TRANSLATE_API_ENDPOINT, AZURE_TRANSLATE_API_KEY, AZURE_API_REGION
 
 def translate_list(to_language, text_list, from_language=None):
     path = '/translate'

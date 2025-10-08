@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
 import pytest
-from schemas.translation_schema import Translation_schema
+from app.schemas.translation_schema import Translation_schema
 
 client = TestClient(app)
 
