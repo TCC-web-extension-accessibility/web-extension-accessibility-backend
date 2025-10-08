@@ -1,7 +1,8 @@
 from app.core.database import engine, SessionLocal
-from app.models.user_model import Base as Base_user
-from app.models.feedback_model import Base as Base_feedback
+from app.models.user_model import Base
 from sqlalchemy.orm import Session
+from app.models.user_model import User_model
+from app.auth.jwt_handler import get_password_hash
 from app.models.user_model import User_model
 from app.auth.jwt_handler import get_password_hash
 
