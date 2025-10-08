@@ -1,14 +1,14 @@
 from typing import Annotated
 from fastapi import Depends,HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from auth.jwt_handler import decode_access_token, verify_password
-from schemas.auth import TokenData
+from app.auth.jwt_handler import decode_access_token, verify_password
+from app.schemas.auth import TokenData
 from jwt.exceptions import InvalidTokenError
-from core.database import get_db
+from app.core.database import get_db
 from sqlalchemy.orm import Session
-from models.user_model import User_model
+from app.models.user_model import User_model
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def get_user(db: Session, username: str) -> User_model |  None:
     return db.query(User_model).filter(User_model.username == username).first()

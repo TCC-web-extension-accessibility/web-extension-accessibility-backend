@@ -2,17 +2,17 @@ from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from fastapi import Depends, HTTPException, status, APIRouter
-from schemas.auth import Token
-from schemas.user_schema import User_schema
-from core.config import ACCESS_TOKEN_EXPIRE_MINUTES
-from auth.auth_service import get_current_active_user, authenticate_user
-from auth.jwt_handler import create_access_token
+from app.schemas.auth import Token
+from app.schemas.user_schema import User_schema
+from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from app.auth.auth_service import get_current_active_user, authenticate_user
+from app.auth.jwt_handler import create_access_token
 from sqlalchemy.orm import Session
-from core.database import get_db
+from app.core.database import get_db
 
 router = APIRouter()
 
-@router.post("/token")
+@router.post("/login")
 async def login_for_access_token(db: Annotated[Session, Depends(get_db)],form_data: Annotated[OAuth2PasswordRequestForm, Depends()],) -> Token:
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:

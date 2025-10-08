@@ -1,7 +1,7 @@
 from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.ai.vision.imageanalysis.models import VisualFeatures
 from azure.core.credentials import AzureKeyCredential
-from core.config import AZURE_CV_KEY, AZURE_CV_ENDPOINT
+from app.core.config import AZURE_CV_KEY, AZURE_CV_ENDPOINT
 
 client = ImageAnalysisClient(
     endpoint=AZURE_CV_ENDPOINT,
@@ -17,6 +17,7 @@ def analyze_image(image_bytes: bytes) -> str:
             gender_neutral_caption=True
         )
     except Exception as e:
+        print(e)
         return {"caption": "error analyzing image"}
         
     if result and result.caption is not None:

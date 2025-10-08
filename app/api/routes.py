@@ -1,12 +1,21 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Response, status
-from schemas.translation_schema import Translation_schema
-from schemas.voice_command_schema import VoiceCommandRequest
-from services.translate_service import translate_list
-from services.image_description import analyze_image
-from services.tts_service import TextToSpeechService
-from services.wit_nlu_service import WitNLUService
+from app.schemas.translation_schema import Translation_schema
+from app.schemas.voice_command_schema import VoiceCommandRequest
+from app.schemas.feedback_schema import Feedback_schema
+from app.services.translate_service import translate_list
+from app.services.image_description import analyze_image
+from app.services.feedback_service import send_feedback
+from app.services.tts_service import TextToSpeechService
+from app.services.wit_nlu_service import WitNLUService
 
 router = APIRouter()
+
+@router.post("/feedback", response_model=Feedback_schema, status_code=status.HTTP_201_CREATED)
+async def post_feedback(feedback_body: Feedback_schema):
+    return send_feedback(
+            title=feedback_body.title,
+            message=feedback_body.message
+    )
 
 @router.post("/translate/")
 async def translate_text_list(translate_body: Translation_schema):

@@ -1,8 +1,8 @@
 import requests
 import logging
 from typing import Optional, Dict, List, Tuple, Any
-from schemas.voice_command_schema import VoiceCommand
-from core.config import WITAI_TOKEN
+from app.schemas.voice_command_schema import VoiceCommand
+from app.core.config import WITAI_TOKEN
 
 logger = logging.getLogger(__name__)
 

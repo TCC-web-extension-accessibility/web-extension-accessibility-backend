@@ -1,15 +1,17 @@
-from core.database import engine, SessionLocal
-from models.user_model import Base
+from app.core.database import engine, SessionLocal
+from app.models.user_model import Base as Base_user
+from app.models.feedback_model import Base as Base_feedback
 from sqlalchemy.orm import Session
-from models.user_model import User_model
-from auth.jwt_handler import get_password_hash
+from app.models.user_model import User_model
+from app.auth.jwt_handler import get_password_hash
 
 def create_tables():
-    Base.metadata.create_all(bind=engine)
+    Base_user.metadata.create_all(bind=engine)
+    Base_feedback.metadata.create_all(bind=engine)
 
 def seed_initial_data():
     db: Session = SessionLocal()
-    if not db.query(User_model).filter(User_model.username=="admin").first():
+    if not db.query(User_model).filter(User_model.username=="admin@example.com").first():
         user = User_model(
             username="admin@example.com",
             full_name="Administrator",
