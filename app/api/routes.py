@@ -77,7 +77,7 @@ def process_voice_command(request: VoiceCommandRequest):
     command = nlu_service.process_command(request.text)
     return command
 
-@router.post("/analyze-colors")
+@router.post("/analyze-colors/")
 async def analyze_colors(
     file: UploadFile = File(..., description="Screenshot da página a ser analisada."),
     color_blindness_type: str = Form("protanopia", description="Tipo de daltonismo.")
