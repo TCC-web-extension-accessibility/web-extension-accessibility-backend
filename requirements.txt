@@ -18,6 +18,7 @@ email_validator==2.2.0
 fastapi==0.116.1
 fastapi-cli==0.0.8
 fastapi-cloud-cli==0.1.5
+fastapi-pagination==0.14.3
 frozenlist==1.7.0
 greenlet==3.2.4
 gTTS==2.5.4
