@@ -8,6 +8,7 @@ azure-ai-vision-imageanalysis==1.0.0
 azure-cognitiveservices-vision-computervision==0.9.1
 azure-common==1.1.28
 azure-core==1.35.0
+bcrypt==4.0.1
 certifi==2025.8.3
 charset-normalizer==3.4.3
 click==8.1.8
@@ -64,6 +65,7 @@ typing-inspection==0.4.1
 typing_extensions==4.14.1
 urllib3==2.5.0
 uvicorn==0.35.0
+uvloop==0.21.0
 watchfiles==1.1.0
 websockets==15.0.1
 yarl==1.20.1
