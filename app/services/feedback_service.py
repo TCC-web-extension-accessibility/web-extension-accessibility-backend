@@ -2,12 +2,14 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.models.feedback_model import Feedback_model
 from app.schemas.feedback_schema import Feedback_schema
+from datetime import datetime
 
 def send_feedback(title, message):
     db: Session = SessionLocal()
     feedback = Feedback_model(
             title=title,
-            message=message
+            message=message,
+            timestamp=datetime.now()
     )
     db.add(feedback)
     db.commit()
