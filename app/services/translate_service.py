@@ -1,5 +1,6 @@
 import requests, uuid, json
 from app.core.config import AZURE_TRANSLATE_API_ENDPOINT, AZURE_TRANSLATE_API_KEY, AZURE_API_REGION
+from fastapi import HTTPException
 
 def translate_list(to_language, text_list, from_language=None):
     path = '/translate'

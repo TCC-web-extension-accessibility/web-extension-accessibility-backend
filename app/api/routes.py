@@ -20,13 +20,6 @@ async def post_feedback(feedback_body: Feedback_schema):
             message=feedback_body.message
     )
 
-@router.post("/feedback", response_model=Feedback_schema, status_code=status.HTTP_201_CREATED)
-async def post_feedback(feedback_body: Feedback_schema):
-    return send_feedback(
-            title=feedback_body.title,
-            message=feedback_body.message
-    )
-
 @router.post("/translate/")
 async def translate_text_list(translate_body: Translation_schema):
     return translate_list(

@@ -11,6 +11,9 @@ jobs:
     env:
       AZURE_CV_KEY: ${{ secrets.AZURE_CV_KEY }}
       AZURE_CV_ENDPOINT: ${{ secrets.AZURE_CV_ENDPOINT }}
+      AZURE_TRANSLATE_API_KEY: ${{ secrets.AZURE_API_TRANSLATE_KEY }}
+      AZURE_TRANSLATE_API_ENDPOINT: ${{ secrets.AZURE_API_TRANSLATE_ENDPOINT }}
+      AZURE_API_REGION: ${{ secrets.AZURE_API_REGION }}
       WITAI_TOKEN: ${{ secrets.WITAI_TOKEN }}
 
     steps:

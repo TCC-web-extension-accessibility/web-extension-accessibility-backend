@@ -1,5 +1,4 @@
 from unittest.mock import MagicMock
-# Supondo que suas funções estão em 'app/services/azure_vision_service.py'
 from app.services.color_analyzer import analyze_image_colors
 
 def test_analyze_image_colors_with_mock(mocker):
