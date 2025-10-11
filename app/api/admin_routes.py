@@ -4,11 +4,14 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status, APIRouter
 from app.schemas.auth import Token
 from app.schemas.user_schema import User_schema
+from app.schemas.feedback_schema import Feedback_response_schema
+from app.services.feedback_service import get_paginated_feedbacks
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.auth.auth_service import get_current_active_user, authenticate_user
 from app.auth.jwt_handler import create_access_token
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from fastapi_pagination import Page
 
 router = APIRouter()
 
@@ -30,3 +33,7 @@ async def login_for_access_token(db: Annotated[Session, Depends(get_db)],form_da
 @router.get("/users/me/", response_model=User_schema)
 async def read_users_me(current_user: Annotated[User_schema, Depends(get_current_active_user)],):
     return current_user
+
+@router.get("/feedback", dependencies=[Depends(get_current_active_user)])
+async def get_feedbacks() -> Page[Feedback_response_schema]:
+    return get_paginated_feedbacks()
