@@ -25,9 +25,7 @@ def translate_list(to_language, text_list, from_language=None):
     response = requests.post(constructed_url, params=params, headers=headers, json=body)
 
     if response.status_code != 200:
-        #gerar um log do erro
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
     translations = response.json()
-    #gear um log do sucesso
     return {orig: trans['translations'][0]['text'] for orig, trans in zip(text_list, translations)}
