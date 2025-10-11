@@ -4,9 +4,6 @@ from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 
-if not AZURE_CV_KEY or not AZURE_CV_ENDPOINT:
-    raise RuntimeError("As variáveis de ambiente AZURE_CV_KEY e AZURE_CV_ENDPOINT não foram definidas.")
-
 computervision_client = ComputerVisionClient(AZURE_CV_ENDPOINT, CognitiveServicesCredentials(AZURE_CV_KEY))
 
 def analyze_image_colors(image_stream) -> dict:
