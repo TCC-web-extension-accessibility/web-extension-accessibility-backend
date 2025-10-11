@@ -1,6 +1,5 @@
 import io
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Response, status
-from app.schemas.feedback_schema import Feedback_schema
 from app.schemas.translation_schema import Translation_schema
 from app.schemas.voice_command_schema import VoiceCommandRequest
 from app.services.feedback_service import send_feedback

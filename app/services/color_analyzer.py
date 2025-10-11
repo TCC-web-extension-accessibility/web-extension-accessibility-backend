@@ -5,7 +5,7 @@ from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 
 if not AZURE_CV_KEY or not AZURE_CV_ENDPOINT:
-    raise RuntimeError("As variáveis de ambiente AZURE_VISION_ENDPOINT e AZURE_VISION_KEY não foram definidas.")
+    raise RuntimeError("As variáveis de ambiente AZURE_CV_KEY e AZURE_CV_ENDPOINT não foram definidas.")
 
 computervision_client = ComputerVisionClient(AZURE_CV_ENDPOINT, CognitiveServicesCredentials(AZURE_CV_KEY))
 
