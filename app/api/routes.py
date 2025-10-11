@@ -1,7 +1,9 @@
 import io
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Response, status
+from app.schemas.feedback_schema import Feedback_schema
 from app.schemas.translation_schema import Translation_schema
 from app.schemas.voice_command_schema import VoiceCommandRequest
+from app.services.feedback_service import send_feedback
 from app.services.translate_service import translate_list
 from app.services.image_description import analyze_image
 from app.services.color_analyzer import analyze_image_colors
