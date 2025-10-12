@@ -1,11 +1,14 @@
-from unittest.mock import MagicMock
-from app.services.color_analyzer import analyze_image_colors
-from app.core.config import AZURE_CV_KEY, AZURE_CV_ENDPOINT
+from unittest.mock import MagicMock, patch
 
+@patch.dict('os.environ', {
+    'AZURE_CV_ENDPOINT': 'https://fake-endpoint.azure.com',
+    'AZURE_CV_KEY': 'fake-api-key-for-testing'
+})
 def test_analyze_image_colors_with_mock(mocker):
     """
     Testa a função que chama a API do Azure, usando um 'mock' para simular a resposta.
     """
+    from app.services.color_analyzer import analyze_image_colors
     mock_api_response = MagicMock()
     mock_api_response.color.is_bw_img = False
     mock_api_response.color.accent_color = "1A2B3C"
