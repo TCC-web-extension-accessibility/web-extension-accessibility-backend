@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock
 from app.services.color_analyzer import analyze_image_colors
+from app.core.config import AZURE_CV_KEY, AZURE_CV_ENDPOINT
 
 def test_analyze_image_colors_with_mock(mocker):
     """
