@@ -18,7 +18,7 @@
 - [ ] O código está seguindo os padrões do projeto
 - [ ] Foram realizados testes
 - [ ] Foi revisado por outro membro da equipe
-- [ ] Não há conflitos com a branch `dev` ou `main`
+- [ ] Não há conflitos com a branch `main`
 
 ## 📌 Informações adicionais
 Algum ponto de atenção? Algo que o revisor precise saber?
