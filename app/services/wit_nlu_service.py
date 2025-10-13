@@ -13,6 +13,7 @@ class WitNLUConfig:
     # Combined entity-intent-roles mapping
     ENTITY_INTENT_ROLES = {
         ('browse_elements', 'navigate'): ['navigate_previous', 'navigate_next', 'navigate_to'],
+        ('get_value', 'navigate'): ['navigate_to'],
         ('get_value', 'click'): ['value'],
         ('get_value', 'read'): ['value'],
         ('scroll', 'navigate'): ['scroll_up', 'scroll_down', 'scroll_right', 'scroll_left'],
@@ -143,6 +144,12 @@ class WitNLUService:
             for entity in entity_list:
                 entity_data = entity
                 entity_names = []
+                
+                if intent == 'navigate' and entity_data.get("name") == 'get_value':
+                    print(WitNLUConfig.ENTITY_INTENT_ROLES.get((entity_data.get("name"), intent), []))
+                    entity_data['name'] = 'browse_elements'
+                    entity_data['type'] = 'navigate_to'
+                    
                 current_entity_name = entity_data.get("name")
 
                 # Validate entity
