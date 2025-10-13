@@ -146,7 +146,6 @@ class WitNLUService:
                 entity_names = []
                 
                 if intent == 'navigate' and entity_data.get("name") == 'get_value':
-                    print(WitNLUConfig.ENTITY_INTENT_ROLES.get((entity_data.get("name"), intent), []))
                     entity_data['name'] = 'browse_elements'
                     entity_data['type'] = 'navigate_to'
                     
