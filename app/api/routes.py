@@ -37,10 +37,10 @@ async def describe_image(file: UploadFile = File(...)):
     return caption  
 
 @router.post("/convert-audio/", response_class=Response)
-def convert_audio(request: TTSRequest) -> Response:
+async def convert_audio(request: TTSRequest) -> Response:
     tts_service = TextToSpeechService()
     try:
-        audio_bytes = tts_service.convert_text_to_audio(request.text, request.lang)
+        audio_bytes = await tts_service.convert_text_to_audio_async(request.text, request.lang)
         return Response(
             content=audio_bytes.read(),
             media_type="audio/mpeg",

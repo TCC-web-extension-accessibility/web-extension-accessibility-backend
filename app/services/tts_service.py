@@ -4,7 +4,7 @@ from gtts import gTTS
 from gtts.lang import tts_langs
 
 class TextToSpeechService:
-    def convert_text_to_audio(self, text: str, lang: str = "pt") -> BytesIO:
+    async def convert_text_to_audio_async(self, text: str, lang: str = "pt") -> BytesIO:
         if text is None:
             raise ValueError("Text cannot be None.")
         if not isinstance(text, str):
@@ -30,4 +30,4 @@ class TextToSpeechService:
         tts.write_to_fp(audio_bytes)
         audio_bytes.seek(0)
 
-        return audio_bytes
+        return audio_bytes    
