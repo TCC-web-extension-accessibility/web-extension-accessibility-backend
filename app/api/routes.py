@@ -2,6 +2,7 @@ from fastapi import APIRouter, File, UploadFile, HTTPException, Response, status
 from app.schemas.translation_schema import Translation_schema
 from app.schemas.voice_command_schema import VoiceCommandRequest
 from app.schemas.feedback_schema import Feedback_request_schema
+from app.schemas.tts_schema import TTSRequest
 from app.services.translate_service import translate_list
 from app.services.image_description import analyze_image
 from app.services.feedback_service import send_feedback
@@ -36,10 +37,10 @@ async def describe_image(file: UploadFile = File(...)):
     return caption  
 
 @router.post("/convert-audio/", response_class=Response)
-def convert_audio(text: str) -> Response:
+def convert_audio(request: TTSRequest) -> Response:
     tts_service = TextToSpeechService()
     try:
-        audio_bytes = tts_service.convert_text_to_audio(text)
+        audio_bytes = tts_service.convert_text_to_audio(request.text, request.lang)
         return Response(
             content=audio_bytes.read(),
             media_type="audio/mpeg",
