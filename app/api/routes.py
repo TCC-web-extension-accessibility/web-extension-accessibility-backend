@@ -64,12 +64,6 @@ def process_voice_command(request: VoiceCommandRequest):
     command = nlu_service.process_command(request.text)
     return command
 
-@router.post("/voice-navigation/command")
-def process_voice_command(request: VoiceCommandRequest):
-    nlu_service = WitNLUService()
-    command = nlu_service.process_command(request.text)
-    return command
-
 @router.post("/analyze-colors/")
 async def analyze_colors(
     file: UploadFile = File(..., description="Screenshot da página a ser analisada."),
