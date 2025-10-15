@@ -1,7 +1,11 @@
 from io import BytesIO
 from typing import Dict
-from gtts import gTTS
+from gtts import gTTS, gTTSError
 from gtts.lang import tts_langs
+import pyttsx3
+import tempfile
+import os
+import time
 
 class TextToSpeechService:
     async def convert_text_to_audio_async(self, text: str, lang: str = "pt") -> BytesIO:
@@ -22,12 +26,41 @@ class TextToSpeechService:
             raise ValueError("Language code cannot be empty.")
 
         supported_languages: Dict[str, str] = tts_langs()
-        if normalized_lang not in supported_languages:
-            raise ValueError(f"Unsupported language: {normalized_lang}.")
+        
+        # Tenta usar gTTS primeiro
+        try:
+            if normalized_lang not in supported_languages:
+                raise ValueError(f"Unsupported language: {normalized_lang}.")
+            
+            tts = gTTS(text=text, lang=normalized_lang)
+            audio_bytes = BytesIO()
+            tts.write_to_fp(audio_bytes)
+            audio_bytes.seek(0)
+            time.sleep(2)
+            
+            return audio_bytes
 
-        tts = gTTS(text=text, lang=normalized_lang)
-        audio_bytes = BytesIO()
-        tts.write_to_fp(audio_bytes)
-        audio_bytes.seek(0)
+        except (gTTSError, Exception):
+            # Usa fallback com pyttsx3 (offline)
+            try:
+                engine = pyttsx3.init()                
+                engine.setProperty("rate", 150)
+                engine.setProperty("volume", 1.0)
+                
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmpfile:
+                    temp_filename = tmpfile.name
 
-        return audio_bytes    
+                engine.save_to_file(text, temp_filename)
+                engine.runAndWait()
+                engine.stop()
+
+                with open(temp_filename, "rb") as f:
+                    audio_bytes = BytesIO(f.read())
+
+                os.remove(temp_filename)
+                audio_bytes.seek(0)
+
+                return audio_bytes
+
+            except Exception:
+                raise ValueError("Erro ao gerar áudio.")  
