@@ -1,7 +1,3 @@
-"""
-Public API routes for CI/CD and external integrations
-These endpoints use API key authentication instead of user tokens
-"""
 import os
 from typing import Annotated
 
