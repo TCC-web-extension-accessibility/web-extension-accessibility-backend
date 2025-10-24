@@ -50,6 +50,7 @@ pytest==8.4.1
 pytest-mock==3.15.1
 python-dotenv==1.1.1
 python-multipart==0.0.20
+pyttsx3==2.99
 PyYAML==6.0.2
 requests==2.32.4
 requests-oauthlib==2.0.0

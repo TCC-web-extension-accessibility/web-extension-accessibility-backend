@@ -36,6 +36,7 @@ class BrowseElementsProcessor(EntityProcessor):
         entity_value = entity_data.get('value')
         
         if entity_role in ['navigate_next', 'navigate_previous']:
+            print(f"Processing {entity_role} with value: {entity_value}")
             return entity_role, None
         elif entity_role == 'navigate_to':
             return entity_role, entity_value
@@ -173,7 +174,8 @@ class WitNLUService:
                     processed_action, processed_target = processor.process(entity_data, intent)
                     if processed_action:
                         action = processed_action
-                        target.append(processed_target)
+                        if processed_target is not None:
+                            target.append(processed_target)
                         
         return action, " ".join(target) if target else None
 

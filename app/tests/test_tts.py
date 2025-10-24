@@ -1,17 +1,37 @@
 import pytest
-import tempfile
-import pygame
-import time
-import os
+from io import BytesIO
+import asyncio
 from app.services.tts_service import TextToSpeechService
 
+
 class TestTextToSpeechService:
-    def setup_method(self):
-        self.service = TextToSpeechService()
-        
-    def test_convert_text_to_audio_empty_text(self):
+    @pytest.fixture
+    def service(self):
+        return TextToSpeechService()
+
+    def test_convert_text_to_audio_empty_text(self, service):
         with pytest.raises(ValueError, match="Text cannot be empty."):
-            self.service.convert_text_to_audio("   ")
+            asyncio.run(service.convert_text_to_audio_async("   "))
+
+    def test_convert_text_to_audio_none_text(self, service):
+        with pytest.raises(ValueError, match="Text cannot be None."):
+            asyncio.run(service.convert_text_to_audio_async(None))
+
+    def test_convert_text_to_audio_invalid_text_type(self, service):
+        with pytest.raises(ValueError, match="Text must be a string."):
+            asyncio.run(service.convert_text_to_audio_async(123))
+
+    def test_convert_text_to_audio_none_lang(self, service):
+        with pytest.raises(ValueError, match="Language code cannot be None."):
+            asyncio.run(service.convert_text_to_audio_async("teste", None))
+
+    def test_convert_text_to_audio_invalid_lang_type(self, service):
+        with pytest.raises(ValueError, match="Language code must be a string."):
+            asyncio.run(service.convert_text_to_audio_async("teste", 123))
+
+    def test_convert_text_to_audio_empty_lang(self, service):
+        with pytest.raises(ValueError, match="Language code cannot be empty."):
+            asyncio.run(service.convert_text_to_audio_async("teste", "   "))
 
     @pytest.mark.parametrize("text", [
         "Olá, tudo bem?",
@@ -21,25 +41,7 @@ class TestTextToSpeechService:
         "Texto com símbolos !@#$%^&*()",
         "Este é um texto um pouco maior para testar a conversão de frases completas com pontuação."
     ])
-    @pytest.mark.parametrize("lang", ["pt"])
-    def test_convert_text_to_audio_and_play(self, text, lang):
-        audio_bytes_io = self.service.convert_text_to_audio(text, lang)
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
-            temp_file.write(audio_bytes_io.read())
-            temp_file_path = temp_file.name
-
-        try:
-            if os.getenv("PLAY_AUDIO", "0") == "1":
-                pygame.mixer.init()
-                pygame.mixer.music.load(temp_file_path)
-                pygame.mixer.music.play()
-
-                while pygame.mixer.music.get_busy():
-                    time.sleep(0.2)
-
-                pygame.mixer.music.stop()
-                pygame.mixer.quit()
-        finally:
-            os.remove(temp_file_path)
+    def test_convert_text_to_audio_valid_texts(self, service, text):
+        result = asyncio.run(service.convert_text_to_audio_async(text, "pt"))
+        assert isinstance(result, BytesIO)
 
