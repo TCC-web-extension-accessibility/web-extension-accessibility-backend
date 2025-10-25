@@ -1,10 +1,14 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException, Response, status
+import io
+from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Response, status
 from app.schemas.translation_schema import Translation_schema
 from app.schemas.voice_command_schema import VoiceCommandRequest
+from app.services.feedback_service import send_feedback
 from app.schemas.feedback_schema import Feedback_request_schema
+from app.schemas.tts_schema import TTSRequest
 from app.services.translate_service import translate_list
 from app.services.image_description import analyze_image
-from app.services.feedback_service import send_feedback
+from app.services.color_analyzer import analyze_image_colors
+from app.services.color_analyzer import suggest_filter
 from app.services.tts_service import TextToSpeechService
 from app.services.wit_nlu_service import WitNLUService
 
@@ -36,10 +40,10 @@ async def describe_image(file: UploadFile = File(...)):
     return caption  
 
 @router.post("/convert-audio/", response_class=Response)
-def convert_audio(text: str) -> Response:
+async def convert_audio(request: TTSRequest) -> Response:
     tts_service = TextToSpeechService()
     try:
-        audio_bytes = tts_service.convert_text_to_audio(text)
+        audio_bytes = await tts_service.convert_text_to_audio_async(request.text, request.lang)
         return Response(
             content=audio_bytes.read(),
             media_type="audio/mpeg",
@@ -60,3 +64,29 @@ def process_voice_command(request: VoiceCommandRequest):
     nlu_service = WitNLUService()
     command = nlu_service.process_command(request.text)
     return command
+
+@router.post("/analyze-colors/")
+async def analyze_colors(
+    file: UploadFile = File(..., description="Screenshot da página a ser analisada."),
+    color_blindness_type: str = Form("protanopia", description="Tipo de daltonismo.")
+):
+    """
+    Recebe uma imagem, envia para a IA do Azure para análise de cor
+    e sugere um filtro adequado.
+    """
+    try:
+        # Lê o conteúdo do arquivo em memória para enviar para a API
+        image_contents = await file.read()
+        image_stream = io.BytesIO(image_contents)
+        
+        color_analysis_from_ai = analyze_image_colors(image_stream)
+        
+        suggestion = suggest_filter(color_analysis_from_ai, color_blindness_type)
+        
+        return {
+            "suggested_filter": suggestion,
+            "ai_analysis_data": color_analysis_from_ai
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ocorreu um erro na análise com a IA: {str(e)}")

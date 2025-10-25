@@ -1,19 +1,25 @@
-from fastapi.testclient import TestClient
-from app.main import app
-from app.services.image_description import analyze_image
 import pytest
+from fastapi.testclient import TestClient
 import io
 
-client = TestClient(app)
+@pytest.fixture
+def client(mocker):
+    mocker.patch('app.main.create_tables')
+    mocker.patch('app.main.seed_initial_data')
 
-def test_describe_image_invalid_file_type():
+    from app.main import app
+
+    with TestClient(app) as test_client:
+        yield test_client
+
+def test_describe_image_invalid_file_type(client):
     response = client.post("/api/v1/describe-image/",
                            files={"file": ("teste.txt", b"conteudo qualquer", "text/plain")}
                            )
     assert response.status_code == 400
     assert response.json()["detail"] == "File must be an image" 
 
-def test_describe_image_success(monkeypatch):
+def test_describe_image_success(client, monkeypatch):
     def mock_image_analyze(_):
         return {"caption":"mocked caption"}
 
@@ -27,7 +33,7 @@ def test_describe_image_success(monkeypatch):
     assert response.status_code == 200
     assert response.json() == {"caption":"mocked caption"}
 
-def test_empty_caption(monkeypatch):
+def test_empty_caption(client, monkeypatch):
     def mock_no_caption(_):
         return {"caption": "no caption"}
     
