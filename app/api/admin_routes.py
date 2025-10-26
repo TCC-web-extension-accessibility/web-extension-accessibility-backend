@@ -6,12 +6,16 @@ from app.schemas.auth import Token
 from app.schemas.user_schema import User_schema
 from app.schemas.feedback_schema import Feedback_response_schema
 from app.services.feedback_service import get_paginated_feedbacks
-from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
-from app.auth.auth_service import get_current_active_user, authenticate_user
-from app.auth.jwt_handler import create_access_token
+from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, FRONTEND_FORGET_PASSWORD_URL, FRONTENTD_HOST, MAIL_CONF
+from app.auth.auth_service import get_current_active_user, authenticate_user, get_user
+from app.auth.jwt_handler import create_access_token, create_reset_password_token, decode_reset_password_token, get_password_hash
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from fastapi_pagination import Page
+from starlette.background import BackgroundTasks
+from app.schemas.forget_password_schemas import ForgetPasswordRequest, SuccessMessage, ResetForgetPassword
+from fastapi_mail import FastMail, MessageSchema, MessageType
+from starlette.responses import JSONResponse
 
 router = APIRouter()
 
@@ -37,3 +41,59 @@ async def read_users_me(current_user: Annotated[User_schema, Depends(get_current
 @router.get("/feedback", dependencies=[Depends(get_current_active_user)])
 async def get_feedbacks() -> Page[Feedback_response_schema]:
     return get_paginated_feedbacks()
+
+@router.post("/forget-password")
+async def forget_password(background: BackgroundTasks, forget_schema: ForgetPasswordRequest, db: Annotated[Session, Depends(get_db)]):
+    try:
+        user = get_user(db, forget_schema.email)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="invalid email address")
+        token = create_reset_password_token(email=user.username)
+
+        forget_url_link = f"{FRONTENTD_HOST}/{FRONTEND_FORGET_PASSWORD_URL}/{token}"
+
+        email_body = {
+            "company_name": "company name",
+            "link_expiry_min": ACCESS_TOKEN_EXPIRE_MINUTES,
+            "reset_link": forget_url_link
+        }
+
+        message = MessageSchema(
+            subject="Intruções para reset de senha",
+            recipients=[forget_schema.email],
+            template_body=email_body,
+            subtype=MessageType.html
+        )
+
+        template_name = "reset_password.html"
+
+        fast_mail = FastMail(MAIL_CONF)
+        background.add_task(fast_mail.send_message, message, template_name=template_name)
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK, 
+            content={"message": "Email de instruções para reset de senha enviado com sucesso.", "success":True, "status_code":status.HTTP_200_OK}, 
+            )
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+              detail="Something Unexpected, Server Error")
+    
+@router.post("/reset-password", response_model=SuccessMessage)
+async def reset_password(rfp: ResetForgetPassword, db:  Annotated[Session, Depends(get_db)]):
+    try:
+        info = decode_reset_password_token(token=rfp.secret_token)
+        if info is None:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Invalid Password Reset Payload or Reset Link Expired")
+        if rfp.new_password != rfp.confirm_password:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="New password and confirm password are not same.")
+        
+        password_hash = get_password_hash(rfp.new_password)
+        user = get_user(db=db, username=info)
+        user.hashed_password = password_hash
+        db.add(user)
+        db.commit()
+        return {'success': True, 'status_code': status.HTTP_200_OK, 'message': 'Password Rest Successfull!'}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+              detail="Some thing unexpected happened!")
