@@ -1,10 +1,12 @@
 from fastapi import FastAPI
-from app.api.admin_routes import router as auth_router
-from app.core.init_db import create_tables,seed_initial_data
-from app.api.routes import router
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import ALLOWED_ORIGIN
 from fastapi_pagination import add_pagination
+
+from app.api.admin_routes import router as auth_router
+from app.api.public_routes import router as public_router
+from app.api.routes import router
+from app.core.config import ALLOWED_ORIGIN
+from app.core.init_db import create_tables, seed_initial_data
 
 app = FastAPI()
 
@@ -22,6 +24,8 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, prefix="/admin", tags=["admin"])
+
+app.include_router(public_router, prefix="/public", tags=["public"])
 
 app.include_router(router,prefix="/api/v1", tags=["api"])
 

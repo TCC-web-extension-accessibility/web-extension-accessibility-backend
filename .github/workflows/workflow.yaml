@@ -9,6 +9,7 @@ jobs:
   continuous-integration:
     runs-on: ubuntu-latest
     env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
       AZURE_CV_KEY: ${{ secrets.AZURE_CV_KEY }}
       AZURE_CV_ENDPOINT: ${{ secrets.AZURE_CV_ENDPOINT }}
       AZURE_TRANSLATE_API_KEY: ${{ secrets.AZURE_API_TRANSLATE_KEY }}
