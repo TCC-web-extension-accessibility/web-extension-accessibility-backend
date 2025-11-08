@@ -14,7 +14,7 @@ def seed_initial_data():
     db: Session = SessionLocal()
     repository = AuthRepositoryImpl(db)
     repository.add_user(
-        username="admin@example.com", 
+        username="webextensionaccessibility@gmail.com", 
         full_name="Administrator", 
         hashed_password=get_password_hash("senha123"),
         disabled=False)

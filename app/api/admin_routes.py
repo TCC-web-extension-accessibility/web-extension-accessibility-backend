@@ -93,6 +93,8 @@ async def reset_password(rfp: ResetForgetPassword, db:  Annotated[Session, Depen
         password_hash = get_password_hash(rfp.new_password)
         update_password(db, username=info, new_password=password_hash)
         return {'success': True, 'status_code': status.HTTP_200_OK, 'message': 'Password Reset Successfull!'}
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
               detail="Some thing unexpected happened!")
