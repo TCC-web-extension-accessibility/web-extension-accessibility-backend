@@ -1,11 +1,11 @@
 import os
+
 from dotenv import load_dotenv
 from fastapi_mail import ConnectionConfig
 
 load_dotenv()
 
-#banco sqlite em memoria para testes
-DATABASE_URL = "sqlite:///:memory:"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -35,3 +35,11 @@ MAIL_CONF = ConnectionConfig(
     MAIL_SSL_TLS=False,
     TEMPLATE_FOLDER="app/templates"
 )
+ADMIN_TOKEN_COOKIE_NAME = "admin_token"
+
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_REPO_OWNER = os.getenv("GITHUB_REPO_OWNER")
+GITHUB_REPO_NAME = os.getenv("GITHUB_REPO_NAME")
+GITHUB_API_URL = "https://api.github.com"
+
+CONFIG_API_KEY = os.getenv("CONFIG_API_KEY")
