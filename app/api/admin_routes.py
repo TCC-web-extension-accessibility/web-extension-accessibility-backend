@@ -50,7 +50,7 @@ async def forget_password(background: BackgroundTasks, forget_schema: ForgetPass
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="invalid email address")
         token = create_reset_password_token(email=user.username)
 
-        forget_url_link = f"{FRONTENTD_HOST}/{FRONTEND_FORGET_PASSWORD_URL}/{token}"
+        forget_url_link = f"{FRONTENTD_HOST}/{FRONTEND_FORGET_PASSWORD_URL}?email={user.username}&token={token}"
 
         email_body = {
             "company_name": "company name",
@@ -74,6 +74,8 @@ async def forget_password(background: BackgroundTasks, forget_schema: ForgetPass
             status_code=status.HTTP_200_OK, 
             content={"message": "Email de instruções para reset de senha enviado com sucesso.", "success":True, "status_code":status.HTTP_200_OK}, 
             )
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         print(e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
