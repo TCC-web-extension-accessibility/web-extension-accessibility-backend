@@ -7,7 +7,7 @@ from app.schemas.user_schema import User_schema
 from app.schemas.feedback_schema import Feedback_response_schema
 from app.services.feedback_service import get_paginated_feedbacks
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, FRONTEND_FORGET_PASSWORD_URL, FRONTENTD_HOST, MAIL_CONF
-from app.auth.auth_service import get_current_active_user, authenticate_user, get_user
+from app.auth.auth_service import get_current_active_user, authenticate_user, get_user, update_password
 from app.auth.jwt_handler import create_access_token, create_reset_password_token, decode_reset_password_token, get_password_hash
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -89,11 +89,8 @@ async def reset_password(rfp: ResetForgetPassword, db:  Annotated[Session, Depen
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="New password and confirm password are not same.")
         
         password_hash = get_password_hash(rfp.new_password)
-        user = get_user(db=db, username=info)
-        user.hashed_password = password_hash
-        db.add(user)
-        db.commit()
-        return {'success': True, 'status_code': status.HTTP_200_OK, 'message': 'Password Rest Successfull!'}
+        update_password(db, username=info, new_password=password_hash)
+        return {'success': True, 'status_code': status.HTTP_200_OK, 'message': 'Password Reset Successfull!'}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
               detail="Some thing unexpected happened!")
