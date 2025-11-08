@@ -39,8 +39,8 @@ async def read_users_me(current_user: Annotated[User_schema, Depends(get_current
     return current_user
 
 @router.get("/feedback", dependencies=[Depends(get_current_active_user)])
-async def get_feedbacks() -> Page[Feedback_response_schema]:
-    return get_paginated_feedbacks()
+async def get_feedbacks(db: Annotated[Session, Depends(get_db)]) -> Page[Feedback_response_schema]:
+    return get_paginated_feedbacks(db)
 
 @router.post("/forget-password")
 async def forget_password(background: BackgroundTasks, forget_schema: ForgetPasswordRequest, db: Annotated[Session, Depends(get_db)]):
