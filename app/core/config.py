@@ -33,7 +33,7 @@ MAIL_CONF = ConnectionConfig(
     MAIL_SERVER="smtp.gmail.com",
     MAIL_STARTTLS=True,
     MAIL_SSL_TLS=False,
-    TEMPLATE_FOLDER="app/templates"
+    TEMPLATE_FOLDER=os.getenv("TEMPLATE_FOLDER")
 )
 ADMIN_TOKEN_COOKIE_NAME = "admin_token"
 
