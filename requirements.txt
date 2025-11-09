@@ -2,6 +2,7 @@ aiohappyeyeballs==2.6.1
 aiohttp==3.12.15
 aiosignal==1.4.0
 aiosmtplib==4.0.2
+annotated-doc==0.0.3
 annotated-types==0.7.0
 anyio==4.10.0
 attrs==25.3.0
@@ -21,12 +22,12 @@ colorama==0.4.6
 cryptography==46.0.3
 dnspython==2.7.0
 dotenv==0.9.9
-email_validator
+email-validator==2.3.0
 fakeredis==2.32.0
 fastapi==0.116.1
 fastapi-cli==0.0.8
 fastapi-cloud-cli==0.1.5
-fastapi-mail==1.5.7
+fastapi-mail==1.5.8
 fastapi-pagination==0.14.3
 flake8==7.3.0
 frozenlist==1.7.0
@@ -65,9 +66,9 @@ pluggy==1.6.0
 propcache==0.3.2
 pycodestyle==2.14.0
 pycparser==2.23
-pydantic==2.11.7
+pydantic==2.12.2
 pydantic-settings==2.11.0
-pydantic_core==2.33.2
+pydantic_core==2.41.4
 pyflakes==3.4.0
 pygame==2.6.1
 Pygments==2.19.2
@@ -96,8 +97,8 @@ sortedcontainers==2.4.0
 SQLAlchemy==2.0.43
 starlette==0.47.2
 typer==0.16.0
-typing-inspection==0.4.1
-typing_extensions==4.14.1
+typing-inspection==0.4.2
+typing_extensions==4.15.0
 urllib3==2.5.0
 uvicorn==0.35.0
 uvloop==0.21.0
