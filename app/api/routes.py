@@ -11,15 +11,16 @@ from app.services.color_analyzer import analyze_image_colors
 from app.services.color_analyzer import suggest_filter
 from app.services.tts_service import TextToSpeechService
 from app.services.wit_nlu_service import WitNLUService
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from fastapi import Depends
+from typing import Annotated
 
 router = APIRouter()
 
-@router.post("/feedback", response_model=Feedback_request_schema, status_code=status.HTTP_201_CREATED)
-async def post_feedback(feedback_body: Feedback_request_schema):
-    return send_feedback(
-            title=feedback_body.title,
-            message=feedback_body.message
-    )
+@router.post("/feedback", status_code=status.HTTP_201_CREATED)
+async def post_feedback(feedback_body: Feedback_request_schema, db: Annotated[Session, Depends(get_db)]):
+    send_feedback(feedback_body, db)
 
 @router.post("/translate/")
 async def translate_text_list(translate_body: Translation_schema):

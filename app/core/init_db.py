@@ -1,6 +1,10 @@
+from app.core.database import engine, SessionLocal,get_db
+from app.models.user_model import Base as Base_user
+from app.models.feedback_model import Base as Base_feedback
 from sqlalchemy.orm import Session
 
 from app.auth.jwt_handler import get_password_hash
+from app.repositories.impl.auth_repository_impl import AuthRepositoryImpl
 from app.core.database import SessionLocal, engine
 from app.models.feedback_model import Base as Base_feedback
 from app.models.user_model import Base as Base_user
@@ -16,19 +20,14 @@ def create_tables():
 
 def seed_initial_data():
     db: Session = SessionLocal()
-    
+    repository = AuthRepositoryImpl(db)
     # Seed admin user
-    if not db.query(User_model).filter(User_model.username=="admin@example.com").first():
-        user = User_model(
-            username="admin@example.com",
-            full_name="Administrator",
-            hashed_password=get_password_hash("senha123"),
-            disabled=False
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-    
+    repository.add_user(
+        username="webextensionaccessibility@gmail.com", 
+        full_name="Administrator", 
+        hashed_password=get_password_hash("senha123"),
+        disabled=False)
+
     # Seed widget configuration
     if not db.query(WidgetConfig_model).first():
         default_config = {

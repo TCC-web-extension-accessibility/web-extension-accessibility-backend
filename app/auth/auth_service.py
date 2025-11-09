@@ -7,11 +7,17 @@ from jwt.exceptions import InvalidTokenError
 from app.core.database import get_db
 from sqlalchemy.orm import Session
 from app.models.user_model import User_model
+from app.repositories.impl.auth_repository_impl import AuthRepositoryImpl
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/admin/login")
 
 def get_user(db: Session, username: str) -> User_model |  None:
-    return db.query(User_model).filter(User_model.username == username).first()
+    repository = AuthRepositoryImpl(db)
+    return repository.get_user_db(username)
+
+def update_password(db: Session, username: str, new_password: str) -> None:
+    repository = AuthRepositoryImpl(db)
+    repository.update_password(username, new_password)
 
 def authenticate_user(db: Session, username: str, password: str) -> User_model | bool:
     user = get_user(db, username)
@@ -36,7 +42,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: An
         token_data = TokenData(username=username)
     except InvalidTokenError:
         raise credentials_exception
-    user = db.query(User_model).filter(User_model.username == token_data.username).first()
+    user = get_user(db, token_data.username)
     if user is None:
         raise credentials_exception
     return user

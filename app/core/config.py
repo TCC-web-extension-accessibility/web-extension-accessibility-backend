@@ -1,10 +1,10 @@
 import os
 
 from dotenv import load_dotenv
+from fastapi_mail import ConnectionConfig
 
 load_dotenv()
 
-#banco sqlite em memoria para testes
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -22,6 +22,19 @@ ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN")
 
 WITAI_TOKEN = os.getenv("WITAI_TOKEN")
 
+FRONTENTD_HOST = os.getenv("FRONTENTD_HOST")
+FRONTEND_FORGET_PASSWORD_URL = os.getenv("FRONTEND_FORGET_PASSWORD_URL")
+
+MAIL_CONF = ConnectionConfig(
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+    MAIL_FROM=os.getenv("MAIL_FROM"),
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    TEMPLATE_FOLDER=os.getenv("TEMPLATE_FOLDER")
+)
 ADMIN_TOKEN_COOKIE_NAME = "admin_token"
 
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")

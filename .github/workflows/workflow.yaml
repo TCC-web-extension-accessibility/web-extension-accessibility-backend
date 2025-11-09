@@ -16,6 +16,10 @@ jobs:
       AZURE_TRANSLATE_API_ENDPOINT: ${{ secrets.AZURE_API_TRANSLATE_ENDPOINT }}
       AZURE_API_REGION: ${{ secrets.AZURE_API_REGION }}
       WITAI_TOKEN: ${{ secrets.WITAI_TOKEN }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
+      TEMPLATE_FOLDER: ${{ secrets.TEMPLATE_FOLDER }}
 
     steps:
       - name: Checkout repository
@@ -24,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.12.3
+          python-version: 3.12.7
 
       - name: Install dependencies
         run: |
