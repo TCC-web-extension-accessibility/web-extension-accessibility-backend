@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.python-version
+.git
+.gitignore
+venv/
+venv2/
+README.MD
+requirements-linux-mac_os.txt
+.env
+*.env
+.env.*
+*/.env
+.env.example

@@ -64,6 +64,8 @@ pillow==11.3.0
 platformdirs==4.5.0
 pluggy==1.6.0
 propcache==0.3.2
+psycopg==3.2.12
+psycopg-binary==3.2.12
 pycodestyle==2.14.0
 pycparser==2.23
 pydantic==2.12.2
