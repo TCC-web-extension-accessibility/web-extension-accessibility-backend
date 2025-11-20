@@ -65,7 +65,7 @@ async def forget_password(background: BackgroundTasks, forget_schema: ForgetPass
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="invalid email address")
         token = create_reset_password_token(email=user.username)
 
-        forget_url_link = f"{FRONTENTD_HOST}/{FRONTEND_FORGET_PASSWORD_URL}?email={user.username}&token={token}"
+        forget_url_link = f"{FRONTENTD_HOST}/{FRONTEND_FORGET_PASSWORD_URL}?email={user.username}&forgotPasswordCode={token}"
 
         email_body = {
             "company_name": "company name",
